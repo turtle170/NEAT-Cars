@@ -250,10 +250,12 @@ pub fn on_enter_battle(
         w_grav.0 = 1.0;
         *w_rb = RigidBody::Dynamic;
         if let Some(p) = pending {
-            commands.entity(w_ent)
-                .insert(ImpulseJoint::new(p.parent, p.joint.clone()))
-                .insert(Friction { coefficient: 1.5, combine_rule: CoefficientCombineRule::Max })
-                .remove::<crate::physics::car_controller::PendingJoint>();
+            if let Some(mut ent_cmds) = commands.get_entity(w_ent) {
+                ent_cmds
+                    .insert(ImpulseJoint::new(p.parent, p.joint.clone()))
+                    .insert(Friction { coefficient: 1.5, combine_rule: CoefficientCombineRule::Max })
+                    .remove::<crate::physics::car_controller::PendingJoint>();
+            }
         }
     }
     for (ent, mut grav, mut agent, mut rb) in q.iter_mut() {
@@ -280,10 +282,12 @@ pub fn activate_cars_in_battle(
             w_grav.0 = 1.0;
             *w_rb = RigidBody::Dynamic;
             if let Some(p) = pending {
-                commands.entity(w_ent)
-                    .insert(ImpulseJoint::new(p.parent, p.joint.clone()))
-                    .insert(Friction { coefficient: 1.5, combine_rule: CoefficientCombineRule::Max })
-                    .remove::<crate::physics::car_controller::PendingJoint>();
+                if let Some(mut ent_cmds) = commands.get_entity(w_ent) {
+                    ent_cmds
+                        .insert(ImpulseJoint::new(p.parent, p.joint.clone()))
+                        .insert(Friction { coefficient: 1.5, combine_rule: CoefficientCombineRule::Max })
+                        .remove::<crate::physics::car_controller::PendingJoint>();
+                }
             }
         }
     }
