@@ -47,7 +47,7 @@ pub fn episode_state_machine(
     state:     Res<State<EpisodeState>>,
     mut next:  ResMut<NextState<EpisodeState>>,
     mut info:  ResMut<EpisodeInfo>,
-    time:      Res<Time>,
+    time:      Res<Time<bevy::time::Real>>,
     _car_q:     Query<&VoxelGrid, With<CarMarker>>,
 ) {
     info.phase_timer -= time.delta_seconds();
