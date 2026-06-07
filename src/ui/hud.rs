@@ -177,13 +177,13 @@ pub fn handle_build_button(
         (&Interaction, &mut BackgroundColor),
         (Changed<Interaction>, With<BuildCarButton>),
     >,
-    mut next_state: ResMut<NextState<EpisodeState>>,
+    mut builder_state: ResMut<crate::ui::builder::BuilderState>,
 ) {
     for (interaction, mut color) in &mut interaction_query {
         match *interaction {
             Interaction::Pressed => {
                 *color = BackgroundColor(Color::rgb(0.1, 0.6, 0.1));
-                next_state.set(EpisodeState::PlayerBuild);
+                builder_state.is_open = !builder_state.is_open;
             }
             Interaction::Hovered => {
                 *color = BackgroundColor(Color::rgb(0.3, 0.9, 0.3));

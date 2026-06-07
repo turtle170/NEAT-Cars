@@ -13,7 +13,7 @@ use crate::weapons::MountedWeapons;
 use crate::ai::neat::{OBS_DIM, ACTION_DIM};
 
 #[derive(States, Debug, Clone, PartialEq, Eq, Hash, Default)]
-pub enum EpisodeState { #[default] Reset, Build, Battle, PlayerBuild }
+pub enum EpisodeState { #[default] Reset, Build, Battle }
 
 #[derive(Resource, Default)]
 pub struct EpisodeInfo {
@@ -60,7 +60,6 @@ pub fn episode_state_machine(
                 info.phase_timer = RESET_PAUSE; 
             }
         }
-        EpisodeState::PlayerBuild => {} // Managed elsewhere
     }
 }
 
