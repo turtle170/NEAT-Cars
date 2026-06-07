@@ -1,6 +1,7 @@
-// ui/hud.rs  (Bevy 0.15)
+// ui/hud.rs
 
 use bevy::prelude::*;
+use bevy_egui::{egui, EguiContexts};
 use crate::battle::manager::{EpisodeInfo, EpisodeState};
 use crate::voxel::grid::VoxelGrid;
 use crate::ai::agent::CarAgent;
@@ -11,24 +12,20 @@ use crate::ai::agent::CarAgent;
 #[derive(Component)] pub struct AgentCountLabel;
 #[derive(Component)] pub struct AgentStatsLabel { pub agent_id: usize }
 #[derive(Component)] pub struct CarTextLabel;
-#[derive(Component)] pub struct BuildCarButton;
-#[derive(Component)] pub struct SpeedButton;
-#[derive(Component)] pub struct SpeedLabel;
-
-pub const SPEED_STEPS: [f32; 5] = [1.0, 2.0, 4.0, 8.0, 10.0];
 
 #[derive(Resource)]
 pub struct SimSpeedState {
-    pub speed_idx: usize,
+    pub speed: f32,
 }
 impl Default for SimSpeedState {
-    fn default() -> Self { Self { speed_idx: 0 } }
+    fn default() -> Self { Self { speed: 1.0 } }
 }
 
 const MAX_BARS: usize = 15;
 
 pub fn setup_hud(mut commands: Commands) {
     commands.insert_resource(SimSpeedState::default());
+    
     // Full-screen root
     commands.spawn(NodeBundle {
         style: Style {
@@ -51,42 +48,6 @@ pub fn setup_hud(mut commands: Commands) {
             spawn_text(row, "Time: --",      TimerLabel);
             spawn_text(row, "Episode: 0",    EpisodeLabel);
             spawn_text(row, "Cars: 0",       AgentCountLabel);
-            
-            // Build Car Button
-            row.spawn((
-                ButtonBundle {
-                    style: Style {
-                        padding: UiRect::all(Val::Px(8.0)),
-                        ..default()
-                    },
-                    background_color: BackgroundColor(Color::rgb(0.2, 0.8, 0.2)),
-                    ..default()
-                },
-                BuildCarButton,
-            )).with_children(|btn| {
-                btn.spawn(TextBundle::from_section(
-                    "BUILD CAR",
-                    TextStyle { font_size: 16.0, color: Color::WHITE, ..default() },
-                ));
-            });
-
-            // Speed Button
-            row.spawn((
-                ButtonBundle {
-                    style: Style {
-                        padding: UiRect::all(Val::Px(8.0)),
-                        ..default()
-                    },
-                    background_color: BackgroundColor(Color::rgb(0.2, 0.4, 0.8)),
-                    ..default()
-                },
-                SpeedButton,
-            )).with_children(|btn| {
-                btn.spawn((TextBundle::from_section(
-                    "Speed: 1x",
-                    TextStyle { font_size: 16.0, color: Color::WHITE, ..default() },
-                ), SpeedLabel));
-            });
         });
 
         // Stats Panel (absolute right)
@@ -188,7 +149,7 @@ pub fn update_hud(
                     text.sections[0].value = format!(
                         "Car {}{}: [{}] Rwd: {:.1}  Fit: {:.1}", 
                         agent.agent_id, 
-                        if alive { "" } else { " ✗" },
+                        if alive { "" } else { " ☠️" },
                         mode,
                         reward,
                         fit
@@ -203,65 +164,26 @@ pub fn update_hud(
     }
 }
 
-pub fn handle_build_button(
-    mut interaction_query: Query<
-        (&Interaction, &mut BackgroundColor),
-        (Changed<Interaction>, With<BuildCarButton>, Without<SpeedButton>),
-    >,
-    mut builder_state: ResMut<crate::ui::builder::BuilderState>,
-) {
-    for (interaction, mut color) in &mut interaction_query {
-        match *interaction {
-            Interaction::Pressed => {
-                *color = BackgroundColor(Color::rgb(0.1, 0.6, 0.1));
-                builder_state.is_open = !builder_state.is_open;
-            }
-            Interaction::Hovered => {
-                *color = BackgroundColor(Color::rgb(0.3, 0.9, 0.3));
-            }
-            Interaction::None => {
-                *color = BackgroundColor(Color::rgb(0.2, 0.8, 0.2));
-            }
-        }
-    }
-}
-
-pub fn handle_speed_button(
-    mut interaction_query: Query<
-        (&Interaction, &mut BackgroundColor, &Children),
-        (Changed<Interaction>, With<SpeedButton>, Without<BuildCarButton>),
-    >,
+pub fn speed_slider_system(
+    mut contexts: EguiContexts,
     mut speed_state: ResMut<SimSpeedState>,
-    mut text_q: Query<&mut Text, With<SpeedLabel>>,
     mut time: ResMut<Time<Virtual>>,
     ep_state: Res<State<EpisodeState>>,
 ) {
-    for (interaction, mut color, children) in &mut interaction_query {
-        match *interaction {
-            Interaction::Pressed => {
-                *color = BackgroundColor(Color::rgb(0.1, 0.3, 0.6));
-                speed_state.speed_idx = (speed_state.speed_idx + 1) % SPEED_STEPS.len();
-                
-                let new_speed = SPEED_STEPS[speed_state.speed_idx];
-                
-                if let Some(&child) = children.first() {
-                    if let Ok(mut text) = text_q.get_mut(child) {
-                        text.sections[0].value = format!("Speed: {}x", new_speed);
+    egui::Window::new("Simulation Speed")
+        .anchor(egui::Align2::LEFT_TOP, egui::vec2(10.0, 50.0))
+        .collapsible(false)
+        .title_bar(false)
+        .show(contexts.ctx_mut(), |ui| {
+            ui.horizontal(|ui| {
+                ui.label("Speed:");
+                let mut speed = speed_state.speed;
+                if ui.add(egui::Slider::new(&mut speed, 1.0..=10.0).text("x")).changed() {
+                    speed_state.speed = speed;
+                    if *ep_state.get() == EpisodeState::Battle {
+                        time.set_relative_speed(speed);
                     }
                 }
-                
-                // Only speed up if in battle phase (as requested)
-                if *ep_state.get() == EpisodeState::Battle {
-                    time.set_relative_speed(new_speed);
-                }
-            }
-            Interaction::Hovered => {
-                *color = BackgroundColor(Color::rgb(0.3, 0.5, 0.9));
-            }
-            Interaction::None => {
-                *color = BackgroundColor(Color::rgb(0.2, 0.4, 0.8));
-            }
-        }
-    }
+            });
+        });
 }
-

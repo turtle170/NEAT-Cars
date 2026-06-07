@@ -243,7 +243,7 @@ pub fn on_enter_battle(
     speed_state: Res<crate::ui::hud::SimSpeedState>,
     mut time: ResMut<Time<Virtual>>,
 ) {
-    let speed = crate::ui::hud::SPEED_STEPS[speed_state.speed_idx];
+    let speed = speed_state.speed;
     time.set_relative_speed(speed);
 
     for (w_ent, mut w_grav, mut w_rb, pending) in wheel_q.iter_mut() {
