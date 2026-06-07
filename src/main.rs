@@ -431,8 +431,10 @@ fn setup_arena(
         Collider::ball(8.0),
         ColliderMassProperties::Mass(200.0), // pushable
         Restitution::coefficient(0.8),
-        Damping { linear_damping: 0.5, angular_damping: 0.5 },
+        Friction { coefficient: 0.8, combine_rule: CoefficientCombineRule::Max },
+        Damping { linear_damping: 0.2, angular_damping: 0.5 }, // Reduced linear damping for aero to take over
         ActiveEvents::COLLISION_EVENTS,
+        ExternalForce::default(),
         crate::battle::sports::Football { last_touch: None },
     ));
 

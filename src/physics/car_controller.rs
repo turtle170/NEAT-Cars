@@ -98,6 +98,8 @@ pub fn car_drive_system(
 
         if is_manual {
             // MANUAL MODE: Apply individual wheel forces directly based on AI outputs
+            ext.force = Vec3::ZERO;
+            ext.torque = Vec3::ZERO;
             for (i, &wheel_ent) in wheels.wheels.iter().enumerate() {
                 let out_idx = 7 + i; // Index 6 is nitro
                 if out_idx < agent.current_action.len() {
@@ -113,6 +115,18 @@ pub fn car_drive_system(
             let throttle = if input.throttle.abs() < 0.1 { 1.0 } else { input.throttle }; 
             ext.force = forward * throttle * 6_510_416.0 * nitro_mult + up * throttle.abs() * 2_604_166.0 * nitro_mult;
             ext.torque = up * input.steer * -6_510_416.0;
+        }
+
+        // Aerodynamics (Drag & Downforce)
+        let speed_sq = vel.linvel.length_squared();
+        if speed_sq > 0.1 {
+            let drag_dir = -vel.linvel.normalize();
+            // F_drag = C_d * v^2
+            let drag_force = drag_dir * speed_sq * 15000.0;
+            // Downforce = C_l * v^2 (push car down to ground based on speed)
+            let downforce = -up * speed_sq * 20000.0;
+            
+            ext.force += drag_force + downforce;
         }
     }
 }

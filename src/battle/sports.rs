@@ -22,7 +22,7 @@ pub enum DiscusState {
 
 pub fn football_system(
     mut collision_events: EventReader<CollisionEvent>,
-    mut football_q: Query<(Entity, &mut Football, &mut Transform, &mut Velocity)>,
+    mut football_q: Query<(Entity, &mut Football, &mut Transform, &mut Velocity, &mut ExternalForce)>,
     car_q: Query<(Entity, &CarMarker)>,
     net_q: Query<&GoalNet>,
     mut agent_q: Query<&mut CarAgent>,
@@ -32,12 +32,32 @@ pub fn football_system(
 ) {
     let mut rng = rand::thread_rng();
 
+    // 1. Aerodynamics (Rocket League style drag)
+    for (_, _, _, vel, mut ext) in football_q.iter_mut() {
+        let speed_sq = vel.linvel.length_squared();
+        if speed_sq > 0.01 {
+            let drag_dir = -vel.linvel.normalize();
+            // Air resistance: scales with velocity squared. 
+            // 200.0 mass ball. F = C * v^2. Let's use C = 0.5 for noticeable drag at high speeds.
+            let drag_force = drag_dir * speed_sq * 0.5;
+            
+            // Magnus effect (curve ball based on spin)
+            // F_magnus = C_m * (angvel x linvel)
+            let magnus_force = vel.angvel.cross(vel.linvel) * 2.0;
+
+            ext.force = drag_force + magnus_force;
+        } else {
+            ext.force = Vec3::ZERO;
+        }
+    }
+
+    // 2. Collisions
     for event in collision_events.read() {
         if let CollisionEvent::Started(e1, e2, _) = event {
             // Find if one is football
             let (fb_ent, other_ent) = if football_q.contains(*e1) { (*e1, *e2) } else if football_q.contains(*e2) { (*e2, *e1) } else { continue; };
             
-            let Ok((_, mut fb, mut tf, mut vel)) = football_q.get_mut(fb_ent) else { continue; };
+            let Ok((_, mut fb, mut tf, mut vel, _)) = football_q.get_mut(fb_ent) else { continue; };
 
             // Is the other a Car?
             if let Ok((car_ent, _)) = car_q.get(other_ent) {
