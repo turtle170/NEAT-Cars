@@ -105,7 +105,7 @@ pub fn discus_system(
         if let CollisionEvent::Started(e1, e2, _) = event {
             let (disc_ent, other_ent) = if discus_q.contains(*e1) { (*e1, *e2) } else if discus_q.contains(*e2) { (*e2, *e1) } else { continue; };
             
-            let Ok((_, mut state, mut tf, _)) = discus_q.get_mut(disc_ent) else { continue; };
+            let Ok((_, mut state, tf, _)) = discus_q.get_mut(disc_ent) else { continue; };
             let Ok((car_ent, _, _, _)) = car_q.get(other_ent) else { continue; };
 
             let new_state = match state.clone() {
@@ -157,7 +157,7 @@ pub fn discus_system(
     }
 
     // 2. Handle Held Discus (Spinning, Tracking, Throwing, Dropping)
-    for (disc_ent, mut state, mut tf, mut vel) in discus_q.iter_mut() {
+    for (_disc_ent, mut state, mut tf, mut vel) in discus_q.iter_mut() {
         let mut transition = None;
         if let DiscusState::Held { owner, spin } = &mut *state {
             if let Ok((_, _, car_tf, _)) = car_q.get(*owner) {

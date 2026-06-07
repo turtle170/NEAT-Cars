@@ -151,8 +151,8 @@ pub fn builder_update(
                 if grid.block_count == 0 { grid.place(GRID_SIZE/2, GRID_SIZE/2, GRID_SIZE/2, BlockType::PlasmaCore); }
 
                 let spawn_pos = Vec3::new(0.0, 15.0, 0.0);
-                let agent_id = 99;
-                let car_bit = 1 << agent_id;
+                let agent_id = 31;
+                let car_bit = 1_u32 << agent_id;
                 
                 let player_car = commands.spawn_empty().id();
                 spawn_block_visuals(&mut commands, &mut meshes, &mut materials, &mut grid, player_car);

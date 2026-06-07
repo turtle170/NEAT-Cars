@@ -48,7 +48,7 @@ pub fn episode_state_machine(
     mut next:  ResMut<NextState<EpisodeState>>,
     mut info:  ResMut<EpisodeInfo>,
     time:      Res<Time>,
-    car_q:     Query<&VoxelGrid, With<CarMarker>>,
+    _car_q:     Query<&VoxelGrid, With<CarMarker>>,
 ) {
     info.phase_timer -= time.delta_seconds();
     match state.get() {
@@ -65,9 +65,11 @@ pub fn episode_state_machine(
 
 pub fn on_enter_build(
     mut info: ResMut<EpisodeInfo>,
+    mut time: ResMut<Time<Virtual>>,
 ) {
     info.next_spawn_idx = 0;
     info.build_frame_counter = 0;
+    time.set_relative_speed(1.0);
 }
 
 pub fn sequential_build_system(
@@ -238,7 +240,12 @@ pub fn on_enter_battle(
     mut wheel_q: Query<(Entity, &mut GravityScale, &mut RigidBody, Option<&crate::physics::car_controller::PendingJoint>), (With<crate::physics::car_controller::WheelMarker>, Without<CarMarker>)>,
     mut fire_events: EventWriter<crate::weapons::FireWeaponEvent>,
     weapons_q: Query<&crate::weapons::MountedWeapons>,
+    speed_state: Res<crate::ui::hud::SimSpeedState>,
+    mut time: ResMut<Time<Virtual>>,
 ) {
+    let speed = crate::ui::hud::SPEED_STEPS[speed_state.speed_idx];
+    time.set_relative_speed(speed);
+
     for (w_ent, mut w_grav, mut w_rb, pending) in wheel_q.iter_mut() {
         w_grav.0 = 1.0;
         *w_rb = RigidBody::Dynamic;

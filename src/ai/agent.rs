@@ -59,7 +59,7 @@ const RAY_COUNT:    usize = 24;
 const RAY_MAX_DIST: f32   = 40.0; // Hard limit
 
 pub fn build_observation(
-    agent_ent:   Entity,
+    _agent_ent:   Entity,
     agent_tf:    &GlobalTransform,
     vel:         &Velocity,
     grid:        &VoxelGrid,
@@ -237,7 +237,7 @@ pub fn agent_step_reward_system(
         // Damage dealt:   added in damage.rs per hit (+ev.damage)
         // Damage taken:   subtracted below via immobile equivalent (done in damage.rs via victim query)
         
-        let mut multiplier = match agent.drive_mode {
+        let multiplier = match agent.drive_mode {
             DriveMode::Manual => 10.0,
             DriveMode::Semi => 1.0,
             DriveMode::Auto => 0.25,
