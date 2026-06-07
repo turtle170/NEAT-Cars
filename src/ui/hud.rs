@@ -145,12 +145,10 @@ pub fn update_hud(
                     let alive = agent.is_alive(g);
                     let reward = agent.accumulated_reward;
                     let fit = neat_mgr.population.get(agent.agent_id).map(|a| a.fitness).unwrap_or(0.0);
-                    let mode = if agent.current_action.len() >= 6 && agent.current_action[5] > 0.5 { "MAN" } else { "SEM" };
                     text.sections[0].value = format!(
-                        "Car {}{}: [{}] Rwd: {:.1}  Fit: {:.1}", 
+                        "Car {}{}: Rwd: {:.1}  Fit: {:.1}", 
                         agent.agent_id, 
                         if alive { "" } else { " ☠️" },
-                        mode,
                         reward,
                         fit
                     );

@@ -8,13 +8,6 @@ use crate::weapons::{FireWeaponEvent, MountedWeapons};
 use super::neat::{OBS_DIM, ACTION_DIM};
 use super::neat_core::FeedforwardNet;
 
-#[derive(PartialEq, Clone, Copy, Debug)]
-pub enum DriveMode {
-    Auto,
-    Semi,
-    Manual,
-}
-
 #[derive(Component)]
 pub struct CarAgent {
     pub agent_id:           usize,
@@ -28,8 +21,6 @@ pub struct CarAgent {
     pub anchor_pos:         Vec3,
     pub anchor_timer:       f32,
     pub current_action:     [f32; ACTION_DIM],
-    pub drive_mode:         DriveMode,
-    pub mode_lock_timer:    f32,
     pub net:                FeedforwardNet,
 }
 
@@ -47,8 +38,6 @@ impl CarAgent {
             anchor_pos:         spawn_pos,
             anchor_timer:       0.,
             current_action:     [0.; ACTION_DIM],
-            drive_mode:         DriveMode::Semi,
-            mode_lock_timer:    0.,
             net,
         }
     }
@@ -237,11 +226,7 @@ pub fn agent_step_reward_system(
         // Damage dealt:   added in damage.rs per hit (+ev.damage)
         // Damage taken:   subtracted below via immobile equivalent (done in damage.rs via victim query)
         
-        let multiplier = match agent.drive_mode {
-            DriveMode::Manual => 10.0,
-            DriveMode::Semi => 1.0,
-            DriveMode::Auto => 0.25,
-        };
+        let multiplier = 10.0;
 
         // Distance moved: +0.8 per unit if damage dealt, -0.8 if no damage (only the 50 dummy reward)
         let mut move_reward = moved * 0.8;
@@ -310,9 +295,6 @@ pub fn agent_step_reward_system(
                 agent.weapons_disabled = false;
             }
         }
-        if agent.mode_lock_timer > 0. {
-            agent.mode_lock_timer -= dt;
-        }
         agent.last_position = pos;
     }
 }
@@ -355,21 +337,6 @@ pub fn ai_step_system(
             action[i] = out[i];
         }
         
-        let wants_mode = if action[5] > 0.6 {
-            DriveMode::Manual
-        } else if action[5] < 0.4 {
-            DriveMode::Auto
-        } else {
-            DriveMode::Semi
-        };
-        
-        if agent.mode_lock_timer <= 0.0 {
-            if agent.drive_mode != wants_mode {
-                agent.drive_mode = wants_mode;
-                agent.mode_lock_timer = 3.0; // 3 second cooldown before switching again
-            }
-        }
-        
         agent.current_action = action;
     });
     
@@ -377,22 +344,7 @@ pub fn ai_step_system(
     for (ent, agent, gtf, _vel, grid, mut input, weapons) in car_q.iter_mut() {
         if !agent.is_alive(grid) { continue; }
         
-        let aim_target = if agent.drive_mode == DriveMode::Auto {
-            // Aimbot: nearest enemy
-            let mut nearest_dist = f32::MAX;
-            let mut nearest_pos = gtf.translation() + gtf.forward() * 20.0;
-            for (other_ent, other_tf) in others.iter() {
-                if *other_ent == ent { continue; }
-                let dist = gtf.translation().distance(other_tf.translation());
-                if dist < nearest_dist {
-                    nearest_dist = dist;
-                    nearest_pos = other_tf.translation();
-                }
-            }
-            nearest_pos
-        } else {
-            gtf.translation() + gtf.forward() * 20.0
-        };
+        let aim_target = gtf.translation() + gtf.forward() * 20.0;
         
         apply_action(&agent.current_action, &mut input, &mut fire_events, &weapons.weapon_entities, aim_target, agent.weapons_disabled);
         
