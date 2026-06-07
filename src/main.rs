@@ -215,24 +215,24 @@ fn spark_system(
                 imp2.impulse -= dir * 80000.0;
             }
 
-            for _ in 0..15 {
+            for _ in 0..40 {
                 use rand::Rng;
                 let dir = Vec3::new(rng.gen_range(-1.0..1.0), rng.gen_range(0.5..2.0), rng.gen_range(-1.0..1.0)).normalize();
-                let speed = rng.gen_range(20.0..50.0);
+                let speed = rng.gen_range(20.0..60.0);
                 
                 commands.spawn((
                     PbrBundle {
-                        mesh: meshes.add(Cuboid::new(0.05, 0.05, 0.6).mesh()),
+                        mesh: meshes.add(Cuboid::new(0.4, 0.4, 2.0).mesh()),
                         material: materials.add(StandardMaterial {
                             base_color: Color::rgb(10.0, 10.0, 5.0),
-                            emissive: Color::rgb(500.0, 500.0, 200.0), // EXTREMELY BRIGHT trail sparks
+                            emissive: Color::rgb(2000.0, 2000.0, 800.0), // EXTREMELY BRIGHT trail sparks
                             ..default()
                         }),
                         transform: Transform::from_translation(pos).looking_to(dir, Vec3::Y),
                         ..default()
                     },
                     RigidBody::Dynamic,
-                    Collider::cuboid(0.02, 0.02, 0.3),
+                    Collider::cuboid(0.2, 0.2, 1.0),
                     Velocity {
                         linvel: dir * speed,
                         angvel: Vec3::ZERO,
