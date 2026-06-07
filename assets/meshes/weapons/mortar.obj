@@ -1,0 +1,80 @@
+# Mortar - stubby thick tube angled 45 degrees on a base plate with legs
+# CCW winding
+o mortar
+
+# Base plate (flat octagon)
+v  0.55  0.02  0.00
+v  0.39  0.02  0.39
+v  0.00  0.02  0.55
+v -0.39  0.02  0.39
+v -0.55  0.02  0.00
+v -0.39  0.02 -0.39
+v  0.00  0.02 -0.55
+v  0.39  0.02 -0.39
+v  0.00 -0.02  0.00
+
+# Mortar tube (hex prism, angled ~45 deg: top tilted forward)
+# Tube bottom ring (at base plate level)
+v  0.18  0.05  0.18
+v  0.00  0.22  0.18
+v -0.18  0.05  0.18
+v -0.18  0.05 -0.18
+v  0.00  0.22 -0.18
+v  0.18  0.05 -0.18
+
+# Tube top ring (shifted in +Y and -Z for 45 deg angle)
+v  0.18  0.75 -0.30
+v  0.00  0.92 -0.30
+v -0.18  0.75 -0.30
+v -0.18  0.75 -0.66
+v  0.00  0.92 -0.66
+v  0.18  0.75 -0.66
+
+# Muzzle center
+v  0.00  0.84 -0.48
+
+# Leg left (flat triangle shape)
+v -0.18  0.05  0.18
+v -0.45  0.02  0.50
+v -0.40  0.02  0.50
+
+# Leg right
+v  0.18  0.05  0.18
+v  0.45  0.02  0.50
+v  0.40  0.02  0.50
+
+# Leg rear
+v  0.00  0.22 -0.18
+v  0.00  0.02 -0.60
+v  0.08  0.02 -0.60
+v  0.00  0.22  0.00
+
+# Base plate top face
+f 1 2 3 4 5 6 7 8
+
+# Base plate bottom
+f 9 8 7 6 5 4 3 2 1
+
+# Mortar tube sides
+f 10 16 17 11
+f 11 17 18 12
+f 12 18 19 13
+f 13 19 20 14
+f 14 20 21 15
+f 15 21 16 10
+
+# Tube bottom cap
+f 10 11 12 13 14 15
+
+# Muzzle opening
+f 22 17 16
+f 22 18 17
+f 22 19 18
+f 22 20 19
+f 22 21 20
+f 22 16 21
+
+# Legs (flat triangles)
+f 23 24 25
+f 26 27 28
+f 29 30 31 32

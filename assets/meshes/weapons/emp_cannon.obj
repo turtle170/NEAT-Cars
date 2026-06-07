@@ -1,0 +1,86 @@
+# EMP Cannon - hexagonal prism emitter dish with coil rings
+# CCW winding
+o emp_cannon
+
+# Hexagonal barrel prism (rear)
+v  0.12  0.20 -1.00
+v  0.00  0.24 -1.00
+v -0.12  0.20 -1.00
+v -0.12 -0.20 -1.00
+v  0.00 -0.24 -1.00
+v  0.12 -0.20 -1.00
+
+v  0.12  0.20  0.00
+v  0.00  0.24  0.00
+v -0.12  0.20  0.00
+v -0.12 -0.20  0.00
+v  0.00 -0.24  0.00
+v  0.12 -0.20  0.00
+
+# Emitter dish (wide hex front)
+v  0.35  0.35  0.20
+v  0.00  0.45  0.20
+v -0.35  0.35  0.20
+v -0.35 -0.35  0.20
+v  0.00 -0.45  0.20
+v  0.35 -0.35  0.20
+
+# Dish face center (back)
+v  0.00  0.00  0.00
+
+# Dish face center (front)
+v  0.00  0.00  0.20
+
+# Coil ring 1 - small ring around barrel
+v  0.22  0.22 -0.75
+v  0.00  0.28 -0.75
+v -0.22  0.22 -0.75
+v -0.22 -0.22 -0.75
+v  0.00 -0.28 -0.75
+v  0.22 -0.22 -0.75
+
+v  0.22  0.22 -0.60
+v  0.00  0.28 -0.60
+v -0.22  0.22 -0.60
+v -0.22 -0.22 -0.60
+v  0.00 -0.28 -0.60
+v  0.22 -0.22 -0.60
+
+# Barrel sides
+f 1 7 8 2
+f 2 8 9 3
+f 3 9 10 4
+f 4 10 11 5
+f 5 11 12 6
+f 6 12 7 1
+
+# Rear barrel cap
+f 5 4 3 2 1 6
+
+# Barrel to dish transition
+f 7 13 14 8
+f 8 14 15 9
+f 9 15 16 10
+f 10 16 17 11
+f 11 17 18 12
+f 12 18 13 7
+
+# Dish front face (triangulated)
+f 20 13 14
+f 20 14 15
+f 20 15 16
+f 20 16 17
+f 20 17 18
+f 20 18 13
+
+# Coil ring sides
+f 21 27 28 22
+f 22 28 29 23
+f 23 29 30 24
+f 24 30 31 25
+f 25 31 32 26
+f 26 32 27 21
+
+# Coil ring caps
+f 21 22 23 24 25 26
+f 27 32 31 30 29 28

@@ -1,0 +1,39 @@
+[package]
+name = "neat_cars"
+version = "0.1.0"
+edition = "2021"
+authors = ["NEAT Cars Rust Edition"]
+description = "AI cars fight each other using NEAT evolutionary learning — Bevy + Rapier"
+license = "Apache-2.0"
+
+[dependencies]
+# ── Game Engine ───────────────────────────────────────────────────────────────
+bevy = { version = "0.13", features = ["jpeg"] }
+
+# ── Physics ───────────────────────────────────────────────────────────────────
+bevy_rapier3d = { version = "0.25", features = ["simd-stable", "debug-render-3d"] }
+
+
+
+# ── Utilities ────────────────────────────────────────────────────────────────
+rand = "0.8"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+parking_lot = "0.12"
+crossbeam-channel = "0.5"
+bytemuck = { version = "1", features = ["derive"] }
+rayon = "1.12.0"
+bevy_obj = "0.13"
+
+[profile.dev]
+opt-level = 1
+incremental = true
+codegen-units = 256
+
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 12

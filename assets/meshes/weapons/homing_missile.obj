@@ -1,0 +1,92 @@
+# Homing Missile - finned missile on launch rail bracket with fold-out fins
+# CCW winding
+o homing_missile
+
+# Missile body (hex prism)
+v  0.10  0.10  0.00
+v  0.00  0.14  0.00
+v -0.10  0.10  0.00
+v -0.10 -0.10  0.00
+v  0.00 -0.14  0.00
+v  0.10 -0.10  0.00
+
+v  0.10  0.10 -1.00
+v  0.00  0.14 -1.00
+v -0.10  0.10 -1.00
+v -0.10 -0.10 -1.00
+v  0.00 -0.14 -1.00
+v  0.10 -0.10 -1.00
+
+# Nose cone (pyramid front)
+v  0.00  0.00  0.35
+
+# Tail cone (pyramid rear)
+v  0.00  0.00 -1.25
+
+# Fin 1 (top, flat triangle)
+v  0.00  0.14 -0.70
+v  0.00  0.14 -1.00
+v  0.00  0.42 -1.00
+
+# Fin 2 (bottom)
+v  0.00 -0.14 -0.70
+v  0.00 -0.14 -1.00
+v  0.00 -0.42 -1.00
+
+# Fin 3 (right)
+v  0.14  0.00 -0.70
+v  0.14  0.00 -1.00
+v  0.42  0.00 -1.00
+
+# Fin 4 (left)
+v -0.14  0.00 -0.70
+v -0.14  0.00 -1.00
+v -0.42  0.00 -1.00
+
+# Launch rail (flat box, below missile)
+v  0.12 -0.20  0.00
+v -0.12 -0.20  0.00
+v  0.12 -0.28  0.00
+v -0.12 -0.28  0.00
+v  0.12 -0.20 -1.00
+v -0.12 -0.20 -1.00
+v  0.12 -0.28 -1.00
+v -0.12 -0.28 -1.00
+
+# Missile body sides
+f 1 7 8 2
+f 2 8 9 3
+f 3 9 10 4
+f 4 10 11 5
+f 5 11 12 6
+f 6 12 7 1
+
+# Nose cone
+f 13 2 1
+f 13 3 2
+f 13 4 3
+f 13 5 4
+f 13 6 5
+f 13 1 6
+
+# Tail cone
+f 14 7 12
+f 14 8 7
+f 14 9 8
+f 14 10 9
+f 14 11 10
+f 14 12 11
+
+# Fins (each as two triangles for thickness)
+f 15 17 16
+f 18 20 19
+f 21 23 22
+f 24 26 25
+
+# Rail sides
+f 27 31 32 28
+f 28 32 34 30
+f 30 34 33 29
+f 29 33 31 27
+f 31 33 34 32
+f 27 28 30 29

@@ -1,0 +1,80 @@
+# Self-Aiming Turret - low-poly dome base + rotating barrel
+# ~30 faces, CCW winding
+o self_aiming_turret
+
+# Base ring (bottom octagon)
+v  0.50  0.00  0.00
+v  0.35  0.00  0.35
+v  0.00  0.00  0.50
+v -0.35  0.00  0.35
+v -0.50  0.00  0.00
+v -0.35  0.00 -0.35
+v  0.00  0.00 -0.50
+v  0.35  0.00 -0.35
+
+# Mid ring (dome equator)
+v  0.40  0.25  0.00
+v  0.28  0.25  0.28
+v  0.00  0.25  0.40
+v -0.28  0.25  0.28
+v -0.40  0.25  0.00
+v -0.28  0.25 -0.28
+v  0.00  0.25 -0.40
+v  0.28  0.25 -0.28
+
+# Dome top
+v  0.00  0.55  0.00
+
+# Barrel base (small ring at dome top)
+v  0.08  0.55  0.00
+v  0.00  0.55  0.08
+v -0.08  0.55  0.00
+v  0.00  0.55 -0.08
+
+# Barrel tip
+v  0.08  1.10  0.00
+v  0.00  1.10  0.08
+v -0.08  1.10  0.00
+v  0.00  1.10 -0.08
+
+# Bottom center
+v  0.00  0.00  0.00
+
+# --- Dome base sides (lower band) ---
+f 1 9 10 2
+f 2 10 11 3
+f 3 11 12 4
+f 4 12 13 5
+f 5 13 14 6
+f 6 14 15 7
+f 7 15 16 8
+f 8 16 9 1
+
+# --- Dome upper band ---
+f 9 17 10
+f 10 17 11
+f 11 17 12
+f 12 17 13
+f 13 17 14
+f 14 17 15
+f 15 17 16
+f 16 17 9
+
+# --- Base bottom cap ---
+f 26 2 1
+f 26 3 2
+f 26 4 3
+f 26 5 4
+f 26 6 5
+f 26 7 6
+f 26 8 7
+f 26 1 8
+
+# --- Barrel sides ---
+f 18 22 23 19
+f 19 23 24 20
+f 20 24 21 25
+f 21 25 22 18
+
+# --- Barrel tip cap ---
+f 22 25 24 23
